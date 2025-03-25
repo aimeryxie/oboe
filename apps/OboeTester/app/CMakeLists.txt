@@ -12,7 +12,7 @@ link_directories(${CMAKE_CURRENT_LIST_DIR}/..)
 file(GLOB_RECURSE app_native_sources src/main/cpp/*)
 
 ### Name must match loadLibrary() call in MainActivity.java
-add_library(oboetester SHARED ${app_native_sources})
+add_library(jbl_oboe_record SHARED ${app_native_sources})
 
 ### INCLUDE OBOE LIBRARY ###
 
@@ -32,5 +32,5 @@ include_directories(
 ### END OBOE INCLUDE SECTION ###
 
 # link to oboe
-target_link_libraries(oboetester log oboe atomic)
-target_link_options(oboetester PRIVATE "-Wl,-z,max-page-size=16384")
+target_link_libraries(jbl_oboe_record log oboe atomic)
+target_link_options(jbl_oboe_record PRIVATE "-Wl,-z,max-page-size=16384")

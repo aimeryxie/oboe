@@ -16,6 +16,8 @@
 
 package com.mobileer.oboetester;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -26,6 +28,11 @@ import java.io.IOException;
  * Activity to record and play back audio.
  */
 public class RecorderActivity extends TestInputActivity {
+
+    public static void launch(Activity ac){
+        Intent intent=new Intent(ac,RecorderActivity.class);
+        ac.startActivity(intent);
+    }
 
     private static final int STATE_RECORDING = 5;
     private static final int STATE_PLAYING = 6;

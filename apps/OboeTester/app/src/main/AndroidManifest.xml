@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
     <uses-feature
         android:name="android.hardware.microphone"
         android:required="false" />
@@ -25,17 +26,20 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
 
     <application
+        android:banner="@mipmap/ic_launcher"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme"
         android:requestLegacyExternalStorage="true"
-        android:banner="@mipmap/ic_launcher">
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+<!--        <activity-->
+<!--            android:name="com.mobileer.RecordOboeDemoActivity"-->
+<!--            android:exported="false" />-->
         <activity
-            android:name=".MainActivity"
+            android:name="com.mobileer.RecordOboeDemoActivity"
+            android:exported="true"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:exported="true">
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -96,47 +100,46 @@
             android:exported="true"
             android:label="@string/title_extra_tests"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ExternalTapToToneActivity"
-            android:label="@string/title_external_tap"
             android:exported="true"
+            android:label="@string/title_external_tap"
             android:screenOrientation="portrait" />
         <activity
             android:name=".TestPlugLatencyActivity"
-            android:label="@string/title_plug_latency"
             android:exported="true"
+            android:label="@string/title_plug_latency"
             android:screenOrientation="portrait" />
         <activity
             android:name=".TestErrorCallbackActivity"
-            android:label="@string/title_error_callback"
             android:exported="true"
+            android:label="@string/title_error_callback"
             android:screenOrientation="portrait" />
         <activity
             android:name=".TestRouteDuringCallbackActivity"
-            android:label="@string/title_route_during_callback"
             android:exported="true"
+            android:label="@string/title_route_during_callback"
             android:screenOrientation="portrait" />
         <activity
             android:name=".DynamicWorkloadActivity"
-            android:label="@string/title_dynamic_load"
             android:exported="true"
+            android:label="@string/title_dynamic_load"
             android:screenOrientation="portrait" />
         <activity
             android:name=".TestColdStartLatencyActivity"
-            android:label="@string/title_cold_start_latency"
             android:exported="true"
+            android:label="@string/title_cold_start_latency"
             android:screenOrientation="portrait" />
         <activity
             android:name=".TestRapidCycleActivity"
-            android:label="@string/title_rapid_cycle"
             android:exported="true"
+            android:label="@string/title_rapid_cycle"
             android:screenOrientation="portrait" />
 
         <service
             android:name=".MidiTapTester"
-            android:permission="android.permission.BIND_MIDI_DEVICE_SERVICE"
-            android:exported="true">
+            android:exported="true"
+            android:permission="android.permission.BIND_MIDI_DEVICE_SERVICE">
             <intent-filter>
                 <action android:name="android.media.midi.MidiDeviceService" />
             </intent-filter>
@@ -145,12 +148,10 @@
                 android:name="android.media.midi.MidiDeviceService"
                 android:resource="@xml/service_device_info" />
         </service>
-
         <service
             android:name=".AudioForegroundService"
-            android:foregroundServiceType="mediaPlayback|microphone"
-            android:exported="false">
-        </service>
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback|microphone"></service>
 
         <provider
             android:name="androidx.core.content.FileProvider"
