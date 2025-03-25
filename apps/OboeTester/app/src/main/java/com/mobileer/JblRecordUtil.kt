@@ -25,7 +25,7 @@ class JblRecordUtil {
     external fun stopRecording()
 
     // 创建 WAV 文件头
-    fun createWavHeader(pcmData: ByteArray, sampleRate: Int, channels: Int): ByteArray {
+    fun createWavHeader(pcmData: ByteArray, sampleRate: Int, channels: Int,bit:Int): ByteArray {
         val dataSize = pcmData.size
         val header = ByteArray(44)
 
@@ -86,7 +86,7 @@ class JblRecordUtil {
         header[33] = 0
 
         // Bits per sample (16 for PCM)
-        header[34] = 16
+        header[34] = bit.toByte()
         header[35] = 0
 
         // data chunk
@@ -105,8 +105,8 @@ class JblRecordUtil {
     }
 
 //    // 保存 WAV 文件
-    fun saveWavFile(filePath: String, pcmData: ByteArray, sampleRate: Int, channels: Int) {
-        val wavHeader = createWavHeader(pcmData, sampleRate, channels)
+    fun saveWavFile(filePath: String, pcmData: ByteArray, sampleRate: Int, channels: Int,bit:Int) {
+        val wavHeader = createWavHeader(pcmData, sampleRate, channels,bit)
         val file = File(filePath)
         file.outputStream().use { outputStream ->
             outputStream.write(wavHeader)

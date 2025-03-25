@@ -75,7 +75,7 @@ class RecordOboeDemoActivity : AppCompatActivity(), JblRecordUtil.AudioCallback 
             }
 
             Log.i(TAG, "end ${path}")
-            util.saveWavFile(path, bout.toByteArray(), 44100, 1)
+            util.saveWavFile(path, bout.toByteArray(), 44100, 4,32)
             bout.close()
         }
     }

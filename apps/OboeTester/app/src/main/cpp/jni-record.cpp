@@ -27,13 +27,14 @@ public:
 
     oboe::DataCallbackResult onAudioReady(oboe::AudioStream *audioStream, void *audioData, int32_t numFrames) override {
         // 获取音频数据
-        auto *data = static_cast<int16_t *>(audioData); // 假设音频格式为 16 位 PCM
+        auto *data = static_cast<int32_t *>(audioData); // 假设音频格式为 16 位 PCM
         int32_t dataSize = numFrames * audioStream->getChannelCount();
        // LOGE("onAudioReady dataSize= %d",(dataSize * sizeof(int16_t)));
         // 将音频数据传递给 Kotlin 层
+
         JNIEnv *env = getJNIEnv();
-        jbyteArray javaArray = env->NewByteArray(dataSize * sizeof(int16_t));
-        env->SetByteArrayRegion(javaArray, 0, dataSize * sizeof(int16_t), reinterpret_cast<jbyte *>(data));
+        jbyteArray javaArray = env->NewByteArray(dataSize * sizeof(int32_t));
+        env->SetByteArrayRegion(javaArray, 0, dataSize * sizeof(int32_t), reinterpret_cast<jbyte *>(data));
         env->CallVoidMethod(javaCallback_, onAudioReady_, javaArray);
         env->DeleteLocalRef(javaArray);
 
@@ -66,8 +67,8 @@ Java_com_mobileer_JblRecordUtil_startRecording(JNIEnv *env, jobject thiz, jobjec
     builder.setDirection(oboe::Direction::Input)
             ->setPerformanceMode(oboe::PerformanceMode::LowLatency)
             ->setSharingMode(oboe::SharingMode::Exclusive)
-            ->setFormat(oboe::AudioFormat::I16) // 16 位 PCM
-            ->setChannelCount(oboe::ChannelCount::Mono)
+            ->setFormat(oboe::AudioFormat::I32) // 16 位 PCM
+            ->setChannelCount(oboe::ChannelCount::CH4)
             ->setSampleRate(44100);
 
     // 创建回调对象
