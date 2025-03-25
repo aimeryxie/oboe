@@ -552,6 +552,8 @@ namespace oboe {
        * Use this for stereo audio.
        */
       Stereo = 2,
+
+      CH4=4,
     };
 
     /**
