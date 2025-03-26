@@ -553,7 +553,10 @@ namespace oboe {
        */
       Stereo = 2,
 
-      CH4=4,
+      /**
+       * Use this for 4 channel
+       */
+      Channel4 = 4,
     };
 
     /**

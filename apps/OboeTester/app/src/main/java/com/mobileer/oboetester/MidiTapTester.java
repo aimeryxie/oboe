@@ -38,7 +38,7 @@ public class MidiTapTester extends MidiDeviceService {
     // Sometimes the service can be run without the MainActivity being run!
     static {
         // Must match name in CMakeLists.txt
-        System.loadLibrary("oboetester");
+        System.loadLibrary("jbl_multi_channel_record");
     }
 
     private ArrayList<NoteListener> mListeners = new ArrayList<NoteListener>();

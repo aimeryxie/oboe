@@ -48,10 +48,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".RecorderActivity"
-            android:label="@string/title_activity_recorder"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".TestOutputActivity"
             android:label="@string/title_activity_test_output"
             android:screenOrientation="portrait" />

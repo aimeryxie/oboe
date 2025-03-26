@@ -1,5 +1,7 @@
-package com.mobileer
+package com.harman.jblrecord
 
+import android.content.Context
+import androidx.annotation.Keep
 import java.io.File
 
 /**
@@ -8,24 +10,26 @@ import java.io.File
  * @ClassName: JblRecordUtil
  * @Description:
  * @Author: xiemingming
- * @Date: 2025/3/25 20:29
+ * @Date: 2025/3/25
  */
-class JblRecordUtil {
+@Keep
+class JblMultiChannelRecord {
     companion object{
         init {
-            System.loadLibrary("jbl_oboe_record")
+            System.loadLibrary("jbl_multi_channel_record")
         }
     }
     interface AudioCallback {
         fun onAudioReady(audioData: ByteArray)
     }
 
-
-    external fun startRecording(callback: AudioCallback)
+    external fun init(context:Context,sampleRate: Int, channels: Int,format:Int)
+    external fun startRecording(callback: AudioCallback):Int
     external fun stopRecording()
+    external fun exitRecord()
 
     // 创建 WAV 文件头
-    fun createWavHeader(pcmData: ByteArray, sampleRate: Int, channels: Int,bit:Int): ByteArray {
+    private fun createWavHeader(pcmData: ByteArray, sampleRate: Int, channels: Int,format:Int): ByteArray {
         val dataSize = pcmData.size
         val header = ByteArray(44)
 
@@ -86,7 +90,7 @@ class JblRecordUtil {
         header[33] = 0
 
         // Bits per sample (16 for PCM)
-        header[34] = bit.toByte()
+        header[34] = format.toByte()
         header[35] = 0
 
         // data chunk
@@ -105,8 +109,8 @@ class JblRecordUtil {
     }
 
 //    // 保存 WAV 文件
-    fun saveWavFile(filePath: String, pcmData: ByteArray, sampleRate: Int, channels: Int,bit:Int) {
-        val wavHeader = createWavHeader(pcmData, sampleRate, channels,bit)
+    fun saveWavFile(filePath: String, pcmData: ByteArray, sampleRate: Int, channels: Int,format:Int) {
+        val wavHeader = createWavHeader(pcmData, sampleRate, channels,format)
         val file = File(filePath)
         file.outputStream().use { outputStream ->
             outputStream.write(wavHeader)

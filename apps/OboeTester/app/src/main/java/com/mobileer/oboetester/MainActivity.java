@@ -50,7 +50,7 @@ public class MainActivity extends BaseOboeTesterActivity {
 
     static {
         // Must match name in CMakeLists.txt
-        System.loadLibrary("oboetester");
+        System.loadLibrary("jbl_multi_channel_record");
     }
 
     private Spinner mModeSpinner;

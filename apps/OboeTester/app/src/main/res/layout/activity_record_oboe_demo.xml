@@ -8,30 +8,139 @@
     tools:context="com.mobileer.RecordOboeDemoActivity">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:text="Channel" />
+
+        <RadioGroup
+            android:id="@+id/rg_channel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rb_1_channel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:text="1Channel" />
+
+            <RadioButton
+                android:id="@+id/rb_2_channel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:text="2Channel" />
+
+            <RadioButton
+                android:id="@+id/rb_4_channel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:checked="true"
+                android:text="4Channel" />
+        </RadioGroup>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="10dp"
+            android:background="#000000" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:text="Format" />
+
+        <RadioGroup
+            android:id="@+id/rg_format"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rb_16_format"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:text="16" />
+
+            <RadioButton
+                android:id="@+id/rb_24_format"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:text="24" />
+
+            <RadioButton
+                android:id="@+id/rb_32_format"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:checked="true"
+                android:text="32" />
+        </RadioGroup>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="10dp"
+            android:background="#000000" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:text="SampleRate" />
+
+        <EditText
+            android:id="@+id/et_sample_rate"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="10dp"
+            android:inputType="number"
+            android:text="44100" />
+
+        <TextView
+            android:id="@+id/tv_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp" />
 
         <Button
-            android:layout_marginVertical="10dp"
             android:id="@+id/bt_start_record"
             android:layout_width="match_parent"
-            android:text="Start Record"
-            android:layout_height="50dp"/>
+            android:layout_height="50dp"
+            android:layout_marginVertical="10dp"
+            android:text="Start Record" />
 
         <Button
             android:id="@+id/bt_stop_record"
-            android:layout_marginVertical="10dp"
             android:layout_width="match_parent"
-            android:text="Stop Record"
-            android:layout_height="50dp"/>
+            android:layout_height="50dp"
+            android:layout_marginVertical="10dp"
+            android:text="Stop Record" />
 
         <Button
             android:id="@+id/bt_to_history_record"
-            android:layout_marginVertical="10dp"
             android:layout_width="match_parent"
-            android:text="To History Record"
-            android:layout_height="50dp"/>
+            android:layout_height="50dp"
+            android:layout_marginVertical="10dp"
+            android:text="To History Record" />
 
     </LinearLayout>
 
