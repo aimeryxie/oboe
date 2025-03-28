@@ -1,10 +1,15 @@
 #include <oboe/Oboe.h>
 #include <jni.h>
 #include <android/log.h>
+#include <ranges>  // C++20 Ranges
 
 #define LOG_TAG "Jbl_Jni_MultiChannelRecord"
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
+#define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
+#define ILOG 0
+#define ELOG 1
+#define DLOG 2
 
 // 全局 JavaVM 实例
 JavaVM *globalJavaVm = nullptr;
@@ -49,6 +54,13 @@ private:
     oboe::AudioFormat format_ = oboe::AudioFormat::I16;
 
     void callbackToKotin(oboe::AudioStream *audioStream, void *audioData, int32_t numFrames) {
+//        LOGD("callbackToKotin channel=%d,format=%d ,config ch=%d,format=%d,numFrames=%d",
+//             audioStream->getHardwareChannelCount()
+//             ,audioStream->getHardwareFormat(),
+//             audioStream->getChannelCount(),
+//             audioStream->getFormat(),numFrames);
+//        oboe::ChannelCount count;
+//        oboe::AudioFormat format;
         switch (format_) {
             case oboe::AudioFormat::I16: {
                 auto *data = static_cast<int16_t *>(audioData);
@@ -113,10 +125,15 @@ RecorderCallback *recorderCallback_ = nullptr;
 jint sampleRate_ = 44100;
 oboe::ChannelCount channels_ = oboe::ChannelCount::Mono;
 oboe::AudioFormat format_ = oboe::AudioFormat::I16;
+static jclass jblMultiChannelRecordClass = nullptr;
+static jmethodID jniLogMethodID = nullptr;
+const char *VERSION = "Jbl Record V1.0.0.2";
 
 void exitRecord();
 
 jstring getPackageName(JNIEnv *env, jobject thiz);
+
+void callKotlinJniLog(JNIEnv *env, int type, const char *tag, const char *message);
 
 void exitRecord() {
     if (audioStream_ != nullptr) {
@@ -132,6 +149,7 @@ void exitRecord() {
         delete recorderCallback_;
         recorderCallback_ = nullptr;
     }
+
 }
 
 jstring getPackageName(JNIEnv *env, jobject thiz) {
@@ -147,7 +165,8 @@ jstring getPackageName(JNIEnv *env, jobject thiz) {
 extern "C"
 JNIEXPORT jint JNICALL
 Java_com_harman_jblrecord_JblMultiChannelRecord_startRecording(JNIEnv *env, jobject thiz,
-                                                                 jobject javaCallback) {
+                                                               jobject javaCallback) {
+    exitRecord();
     // 创建 AudioStreamBuilder
     oboe::AudioStreamBuilder builder;
     builder.setDirection(oboe::Direction::Input)
@@ -160,7 +179,7 @@ Java_com_harman_jblrecord_JblMultiChannelRecord_startRecording(JNIEnv *env, jobj
     // 创建回调对象
     recorderCallback_ = new RecorderCallback(env, javaCallback, format_);
     builder.setDataCallback(recorderCallback_);
-
+    callKotlinJniLog(env, DLOG, LOG_TAG, "startRecord");
     // 打开音频流
     oboe::Result result = builder.openStream(&audioStream_);
     if (result != oboe::Result::OK) {
@@ -168,6 +187,7 @@ Java_com_harman_jblrecord_JblMultiChannelRecord_startRecording(JNIEnv *env, jobj
         return -1;
     }
 
+    LOGD("device ID=%d", audioStream_->getDeviceId());
     // 开始录音
     oboe::Result startResult = audioStream_->requestStart();
     if (startResult != oboe::Result::OK) {
@@ -180,6 +200,7 @@ Java_com_harman_jblrecord_JblMultiChannelRecord_startRecording(JNIEnv *env, jobj
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_harman_jblrecord_JblMultiChannelRecord_stopRecording(JNIEnv *env, jobject thiz) {
+    callKotlinJniLog(env, DLOG, LOG_TAG, "stopRecording");
     exitRecord();
 }
 
@@ -187,24 +208,49 @@ Java_com_harman_jblrecord_JblMultiChannelRecord_stopRecording(JNIEnv *env, jobje
 extern "C"
 JNIEXPORT jint JNICALL
 JNI_OnLoad(JavaVM *vm, void *reserved) {
+    LOGD("JNI_OnLoad");
     globalJavaVm = vm;
     return JNI_VERSION_1_6;
 }
 
 extern "C"
 JNIEXPORT void JNICALL
+JNI_OnUnload(JavaVM *vm, void *reserved) {
+    printf("JNI_OnUnload");
+    LOGD("JNI_OnUnload");
+    JNIEnv *env;
+    if (vm->GetEnv(reinterpret_cast<void **>(&env), JNI_VERSION_1_6) != JNI_OK) {
+        return;
+    }
+    if (jblMultiChannelRecordClass != nullptr) {
+        env->DeleteGlobalRef(jblMultiChannelRecordClass);
+        jblMultiChannelRecordClass = nullptr;
+    }
+}
+
+
+extern "C"
+JNIEXPORT void JNICALL
 Java_com_harman_jblrecord_JblMultiChannelRecord_exitRecord(JNIEnv *env, jobject thiz) {
+    callKotlinJniLog(env, DLOG, LOG_TAG, "exitRecord");
     exitRecord();
+    LOGD("Exit jni record");
+    if (jblMultiChannelRecordClass != nullptr) {
+        env->DeleteGlobalRef(jblMultiChannelRecordClass);
+        jblMultiChannelRecordClass = nullptr;
+    }
 }
 
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_harman_jblrecord_JblMultiChannelRecord_init(JNIEnv *env, jobject thiz, jobject context,
-                                                       jint sample_rate, jint channels,
-                                                       jint format) {
+                                                     jint sample_rate, jint channels,
+                                                     jint format) {
     sampleRate_ = sample_rate;
     channels_ = (oboe::ChannelCount) channels;
     format_ = (oboe::AudioFormat) format;
+    callKotlinJniLog(env, DLOG, LOG_TAG, VERSION);
+    LOGI("jblRecord version:%s at 2025-03-28 01", VERSION);
     jstring packageName = getPackageName(env, context);
     if (packageName == nullptr) {
         LOGE("init jbl record packageName is null");
@@ -247,10 +293,62 @@ Java_com_harman_jblrecord_JblMultiChannelRecord_init(JNIEnv *env, jobject thiz, 
 
     // 5. 释放内存
     env->ReleaseStringUTFChars(packageName, cStr);
+
     LOGD("init jbl record end packageName is %s ", cStr);
     if (!isEqual) {
-        LOGE("[warning]: packageName must [%s],current is [%s] not match ",targetStr,cStr);
+        LOGE("[warning]: packageName must [%s],current is [%s] not match", targetStr, cStr);
+       // env->NewString();
+        //callKotlinJniLog(env,ELOG,LOG_TAG,"[warning]: packageName must [%s],current is [%s] not match");
         //exit(0);
     }
 }
+
+
+void callKotlinJniLog(JNIEnv *env, int type, const char *tag, const char *message) {
+    // 1. 检查全局类引用是否已缓存
+    // 1. 查找类（首次调用时缓存）
+    if (jblMultiChannelRecordClass == nullptr) {
+        jclass localClass = env->FindClass(
+                "com/harman/jblrecord/JblMultiChannelRecord");//$Companion
+        if (!localClass) {
+            LOGE("dont find class [com/harman/jblrecord/JblMultiChannelRecord]");
+            return;
+        }
+        jblMultiChannelRecordClass = (jclass) env->NewGlobalRef(localClass);
+        env->DeleteLocalRef(localClass);
+    }
+
+    // 2. 检查方法ID是否已缓存
+    if (jniLogMethodID == nullptr) {
+        jniLogMethodID = env->GetStaticMethodID(
+                jblMultiChannelRecordClass,
+                "jniLog",
+                "(ILjava/lang/String;Ljava/lang/String;)V"
+        );
+        if (jniLogMethodID == nullptr) {
+            LOGE("Failed to find jniLog method");
+            return;
+        }
+    }
+
+    // 3. 将C字符串转换为Java的String对象
+    jstring jTag = env->NewStringUTF(tag);
+    jstring jMessage = env->NewStringUTF(message);
+
+    // 4. 调用静态方法
+    env->CallStaticVoidMethod(
+            jblMultiChannelRecordClass,
+            jniLogMethodID,
+            (jint) type,
+            jTag,
+            jMessage
+    );
+
+    // 5. 释放局部引用
+    env->DeleteLocalRef(jTag);
+    env->DeleteLocalRef(jMessage);
+}
+
+
+
 

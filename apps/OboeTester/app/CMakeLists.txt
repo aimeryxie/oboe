@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.4.1)
 
+# 显式启用 C++20
+#set(CMAKE_CXX_STANDARD 20)
+#set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wall -std=c++17 -fvisibility=hidden")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O2")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
